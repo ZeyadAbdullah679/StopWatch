@@ -20,16 +20,24 @@ import com.example.stopwatch.R
 
 
 @Composable
-fun LapControllers() {
+fun LapControllers(
+    isRunning: Boolean,
+    onStopClick: () -> Unit,
+    onPlayClick: () -> Unit,
+    onLapClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        LapButton("RESET", R.drawable.ic_round_stop, {})
-        LapButton("START", R.drawable.ic_round_play_arrow, {})
-        LapButton("LAP", R.drawable.ic_round_lap, {})
+        LapButton("Reset", R.drawable.ic_round_stop, onStopClick)
+        if (isRunning)
+            LapButton("Play", R.drawable.ic_round_pause, onPlayClick)
+        else
+            LapButton("Pause", R.drawable.ic_round_play_arrow, onPlayClick)
+        LapButton("Lap", R.drawable.ic_round_lap, onLapClick)
     }
 }
 

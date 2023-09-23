@@ -16,18 +16,23 @@ import androidx.compose.ui.unit.sp
 import com.example.stopwatch.ui.theme.fontFamily
 
 @Composable
-fun LapDetails(modifier: Modifier = Modifier) {
+fun LapDetails(
+    lapTime: List<Long>,
+    overallTime: List<Long>,
+    lapCount: List<Long>,
+    modifier: Modifier = Modifier,
+) {
     Row(
         modifier.padding(start = 16.dp, end = 16.dp),
     ) {
-        LapItem("LAP", Modifier.weight(1f))
-        LapItem("OVERALL", Modifier.weight(1f))
-        LapItem("LAP TIME", Modifier.weight(1f))
+        LapItem("LAP", lapCount, Modifier.weight(1f))
+        LapItem("OVERALL", overallTime, Modifier.weight(1f))
+        LapItem("LAP TIME", lapTime, Modifier.weight(1f))
     }
 }
 
 @Composable
-fun LapItem(title: String, modifier: Modifier = Modifier) {
+fun LapItem(title: String, data: List<Long>, modifier: Modifier = Modifier) {
     LazyColumn(
         modifier
     ) {
@@ -36,10 +41,27 @@ fun LapItem(title: String, modifier: Modifier = Modifier) {
                 text = title,
                 style = TextStyle(
                     fontFamily = fontFamily,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     lineHeight = 24.sp,
                     letterSpacing = 0.sp
+                ),
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp), // Adjust padding as needed
+                textAlign = TextAlign.Center
+            )
+        }
+        items(data.size) { index ->
+            Text(
+                text = formatMilliseconds(data[index]).toString()
+                    .drop(1).dropLast(1)
+                    .replace(", ", " : "),
+                style = TextStyle(
+                    fontFamily = fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 18.sp,
                 ),
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 modifier = Modifier

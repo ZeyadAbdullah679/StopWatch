@@ -14,6 +14,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +28,7 @@ import com.example.stopwatch.ui.LapDetails
 import com.example.stopwatch.ui.TimerClock
 import com.example.stopwatch.ui.TopAppBar
 import com.example.stopwatch.ui.theme.StopWatchTheme
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +50,25 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StopWatchApp() {
+
+    var isRunning by rememberSaveable { mutableStateOf(false) }
+    var startTime by rememberSaveable { mutableStateOf(0L) }
+    var elapsedTime by rememberSaveable { mutableStateOf(0L) }
+    var storedTime by rememberSaveable { mutableStateOf(0L) }
+    var lapTime by rememberSaveable { mutableStateOf(listOf<Long>()) }
+    var lapCount by rememberSaveable { mutableStateOf(listOf<Long>()) }
+    var overallTime by rememberSaveable { mutableStateOf(listOf<Long>()) }
+
+
+    // Create a coroutine for updating elapsed time
+    LaunchedEffect(isRunning) {
+        while (isRunning) {
+            val currentTime = System.currentTimeMillis()
+            elapsedTime = currentTime - startTime + storedTime
+            delay(1) // Delay for 1 millisecond
+        }
+    }
+
     Scaffold(
         topBar = { TopAppBar() }
     ) { paddingValues ->
@@ -54,14 +79,38 @@ fun StopWatchApp() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.size(36.dp))
+            Spacer(modifier = Modifier.size(16.dp))
             TimerClock(
                 circleColor = MaterialTheme.colorScheme.primaryContainer,
-                textColor = MaterialTheme.colorScheme.onPrimaryContainer
+                textColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                elapsedTime = elapsedTime
             )
-            Spacer(modifier = Modifier.size(36.dp))
-            LapDetails(Modifier.weight(1f))
-            LapControllers()
+            Spacer(modifier = Modifier.size(20.dp))
+            LapDetails(lapTime, overallTime, lapCount, Modifier.weight(1f))
+            LapControllers(
+                isRunning = isRunning,
+                onPlayClick = {
+                    isRunning = !isRunning
+                    if (isRunning)
+                        startTime = System.currentTimeMillis()
+                    else
+                        storedTime = elapsedTime
+                },
+                onStopClick = {
+                    isRunning = false
+                    startTime = 0L
+                    elapsedTime = 0L
+                    storedTime = 0L
+                    lapTime = listOf()
+                    lapCount = listOf()
+                    overallTime = listOf()
+                },
+                onLapClick = {
+                    lapTime = lapTime + listOf(elapsedTime - lapTime.sum())
+                    lapCount = lapCount + listOf(lapCount.size.toLong() + 1)
+                    overallTime = overallTime + listOf(elapsedTime)
+                }
+            )
         }
     }
 }

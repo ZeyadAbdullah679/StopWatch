@@ -21,22 +21,43 @@ import androidx.compose.ui.unit.sp
 import com.example.stopwatch.ui.theme.fontFamily
 
 @Composable
-fun TimerClock(circleColor: Color, textColor: Color) {
+fun TimerClock(circleColor: Color, textColor: Color, elapsedTime: Long) {
+    val time = formatMilliseconds(elapsedTime)
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .size(250.dp)
+            .size(275.dp)
             .shadow(8.dp, shape = CircleShape) // Add shadow here
     ) {
         Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
             drawCircle(color = circleColor)
         })
         Row {
-            DrawClockText(count = "00", unit = "MIN", textColor = textColor)
-            Spacer(modifier = Modifier.size(8.dp))
-            DrawClockText(count = "00", unit = "SEC", textColor = textColor)
-            Spacer(modifier = Modifier.size(8.dp))
-            DrawClockText(count = "00", unit = "MIL", textColor = textColor)
+            DrawClockText(count = time[0], unit = "MIN", textColor = textColor)
+            Text(
+                text = " : ",
+                style = TextStyle(
+                    fontFamily = fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 45.sp,
+                    lineHeight = 24.sp,
+                    letterSpacing = 0.5.sp
+                ),
+                color = textColor
+            )
+            DrawClockText(count = time[1], unit = " SEC", textColor = textColor)
+            Text(
+                text = " : ",
+                style = TextStyle(
+                    fontFamily = fontFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 45.sp,
+                    lineHeight = 24.sp,
+                    letterSpacing = 0.5.sp
+                ),
+                color = textColor
+            )
+            DrawClockText(count = time[2], unit = " MIL", textColor = textColor)
         }
     }
 }
@@ -69,3 +90,17 @@ fun DrawClockText(count: String, unit: String, textColor: Color) {
         )
     }
 }
+
+fun formatMilliseconds(milliseconds: Long): List<String> {
+    val minutes = (milliseconds / 60000) % 60
+    val seconds = (milliseconds / 1000) % 60
+    val millis = (milliseconds % 1000) / 10 // Get hundreds and tens
+
+    return listOf(
+        String.format("%02d", minutes),
+        String.format("%02d", seconds),
+        String.format("%02d", millis)
+    )
+}
+
+

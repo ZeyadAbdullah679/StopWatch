@@ -27,7 +27,7 @@ fun TimerClock(circleColor: Color, textColor: Color, elapsedTime: Long) {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(275.dp)
-            .shadow(8.dp, shape = CircleShape) // Add shadow here
+            .shadow(8.dp, shape = CircleShape)
     ) {
         Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
             drawCircle(color = circleColor)
@@ -94,7 +94,7 @@ fun DrawClockText(count: String, unit: String, textColor: Color) {
 fun formatMilliseconds(milliseconds: Long): List<String> {
     val minutes = (milliseconds / 60000) % 60
     val seconds = (milliseconds / 1000) % 60
-    val millis = (milliseconds % 1000) / 10 // Get hundreds and tens
+    val millis = (milliseconds % 1000) / 10
 
     return listOf(
         String.format("%02d", minutes),

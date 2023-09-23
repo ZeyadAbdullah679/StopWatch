@@ -60,12 +60,11 @@ fun StopWatchApp() {
     var overallTime by rememberSaveable { mutableStateOf(listOf<Long>()) }
 
 
-    // Create a coroutine for updating elapsed time
     LaunchedEffect(isRunning) {
         while (isRunning) {
             val currentTime = System.currentTimeMillis()
             elapsedTime = currentTime - startTime + storedTime
-            delay(1) // Delay for 1 millisecond
+            delay(1)
         }
     }
 

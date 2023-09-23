@@ -1,4 +1,4 @@
-package com.example.stopwatch
+package com.example.stopwatch.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box

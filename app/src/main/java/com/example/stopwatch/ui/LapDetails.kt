@@ -8,12 +8,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.stopwatch.ui.theme.fontFamily
 
 @Composable
 fun LapDetails(
@@ -23,52 +19,59 @@ fun LapDetails(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier.padding(start = 16.dp, end = 16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
     ) {
-        LapItem("LAP", lapCount, Modifier.weight(1f))
-        LapItem("OVERALL", overallTime, Modifier.weight(1f))
-        LapItem("LAP TIME", lapTime, Modifier.weight(1f))
+        ItemTextHeader(type = "Lap", modifier = Modifier.weight(1f))
+        ItemTextHeader(type = "Lap Time", modifier = Modifier.weight(1f))
+        ItemTextHeader(type = "Overall", modifier = Modifier.weight(1f))
+    }
+    LazyColumn(
+        modifier
+            .fillMaxWidth()
+            .padding(start = 8.dp, end = 8.dp),
+    ) {
+        items(lapTime.size) { index ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+            ) {
+                Text(
+                    text = lapCount[index].toString(),
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = formatMilliseconds(lapTime[index]).toString()
+                        .drop(1).dropLast(1)
+                        .replace(", ", " : "),
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = formatMilliseconds(overallTime[index]).toString()
+                        .drop(1).dropLast(1)
+                        .replace(", ", " : "),
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
     }
 }
 
 @Composable
-fun LapItem(title: String, data: List<Long>, modifier: Modifier = Modifier) {
-    LazyColumn(
-        modifier
-    ) {
-        item {
-            Text(
-                text = title,
-                style = TextStyle(
-                    fontFamily = fontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    lineHeight = 24.sp,
-                    letterSpacing = 0.sp
-                ),
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp), // Adjust padding as needed
-                textAlign = TextAlign.Center
-            )
-        }
-        items(data.size) { index ->
-            Text(
-                text = formatMilliseconds(data[index]).toString()
-                    .drop(1).dropLast(1)
-                    .replace(", ", " : "),
-                style = TextStyle(
-                    fontFamily = fontFamily,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 18.sp,
-                ),
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp), // Adjust padding as needed
-                textAlign = TextAlign.Center
-            )
-        }
-    }
+fun ItemTextHeader(type: String, modifier: Modifier = Modifier) {
+    Text(
+        text = type,
+        style = MaterialTheme.typography.titleMedium,
+        modifier = modifier
+            .padding(8.dp),
+        textAlign = TextAlign.Center
+    )
 }
